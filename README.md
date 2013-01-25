@@ -19,13 +19,13 @@ var game = createEngine({
 
 To simply set the sky at a certain time of day:
 ```js
-var createSky = require('../')(game);
+var createSky = require('voxel-sky')(game);
 var sky = createSky(1200); // Set to noon
 ```
 
 Or if you would like to run through a day/night cycle:
 ```js
-var createSky = require('../')(game);
+var createSky = require('voxel-sky')(game);
 var sky = createSky();
 game.on('tick', sky);
 ```
@@ -34,7 +34,7 @@ game.on('tick', sky);
 
 You can build your own sky using the included helpers:
 ```js
-var createSky = require('../')(game);
+var createSky = require('voxel-sky')(game);
 var sky = createSky(function(time) {
   
   // spin the sky once per day
@@ -88,7 +88,7 @@ sky for a more in depth example.
 There are a variety of starting options for voxel-sky. Just make sure you always
 pass it a game:
 ```js
-var createSky = require('../')({
+var createSky = require('voxel-sky')({
   game: game,
 
   // starting time of the day
