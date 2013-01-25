@@ -1,0 +1,45 @@
+{
+  "name": "voxel-sky",
+  "description": "A sky for voxel.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/shama/voxel-sky",
+  "author": {
+    "name": "Kyle Robinson Young",
+    "email": "kyle@dontkry.com",
+    "url": "http://dontkry.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shama/voxel-sky.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shama/voxel-sky/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/shama/voxel-sky/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "start": "echo \"open localhost:8080/\" && cd example && ../node_modules/.bin/browservefy world.js 8080 -- -d",
+    "gh-pages": "cp -R ./example/* ./ && browserify world.js -o world.js"
+  },
+  "dependencies": {
+    "voxel-trajectory": "~0.1.0"
+  },
+  "devDependencies": {
+    "voxel-engine": "~0.3.4",
+    "voxel-perlin-terrain": "0.0.5",
+    "voxel-forest": "0.0.0",
+    "browservefy": "0.0.0",
+    "toolbar": "0.0.2"
+  },
+  "keywords": [
+    "voxel",
+    "skybox"
+  ]
+}
