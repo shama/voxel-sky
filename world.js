@@ -80567,6 +80567,8 @@ Sky.prototype._default = {
     this.paint('top', this.moon, 0);
     // tilt the earth
     this.outer.rotation.z = this.inner.rotation.z = Math.PI / 180 * -23.4;
+    // no sunlight at startup
+    this.sunlight.intensity = 0;
   },
   day: 0,
   moonCycle: 29.5305882
