@@ -66,3 +66,9 @@ nav.bar-tab li .tab-label {
   font-size: 80%;
   text-align: right;
 }
+
+.twitter-share-button {
+  position: fixed;
+  bottom: 5px;
+  right: 55px;
+}
