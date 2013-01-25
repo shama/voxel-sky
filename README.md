@@ -17,7 +17,7 @@ var game = createEngine({
 });
 ```
 
-To simply set the sky at a certain time of day:
+To simply set the sky to a certain time of day:
 ```js
 var createSky = require('voxel-sky')(game);
 var sky = createSky(1200); // Set to noon
