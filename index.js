@@ -93,11 +93,7 @@ Sky.prototype.color = function(end, time) {
 };
 
 Sky.prototype.speed = function(speed) {
-  this._speed = 0;
-  for (var i = 0; i <= this.time; i++) {
-    this.fn(i);
-  }
-  this._speed = speed;
+  return this._speed = speed;
 };
 
 Sky.prototype.paint = function(faces, fn) {
@@ -180,19 +176,27 @@ Sky.prototype._default = {
     this.sunlight.intensity = 0;
   },
   day: 0,
-  moonCycle: 29.5305882
+  moonCycle: 29.5305882,
+  until: false
 };
 
 // default sky fn
 Sky.prototype.fn = function(time) {
   var my = this._default;
+  var hour = Math.round(time / 100) * 100;
 
   // run initialization once
   if (my.init) { my.init.call(this); delete my.init; }
 
   // switch color based on time of day
-  // make this fuzzy so colors change near the time
-  if (my.hours[time]) this.color(my.hours[time].color, 1000);
+  // maybe make this next part into a helper function
+  if (my.hours[hour]) {
+    if (!my.until) {
+      this.color(my.hours[hour].color, 1000);
+      my.until = hour + 100;
+    }
+  }
+  if (my.until === hour) my.until = false;
 
   // change moon phase
   if (time === 1200) {
