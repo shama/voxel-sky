@@ -176,8 +176,6 @@ Sky.prototype._default = {
     this.paint(['top', 'left', 'right', 'front', 'back'], this.stars, 500);
     // add full moon to the top
     this.paint('top', this.moon, 0);
-    // tilt the earth
-    this.outer.rotation.z = this.inner.rotation.z = Math.PI / 180 * -23.4;
     // no sunlight at startup
     this.sunlight.intensity = 0;
   },
