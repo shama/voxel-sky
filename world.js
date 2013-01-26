@@ -80482,11 +80482,7 @@ Sky.prototype.color = function(end, time) {
 };
 
 Sky.prototype.speed = function(speed) {
-  this._speed = 0;
-  for (var i = 0; i <= this.time; i++) {
-    this.fn(i);
-  }
-  this._speed = speed;
+  return this._speed = speed;
 };
 
 Sky.prototype.paint = function(faces, fn) {
@@ -80569,19 +80565,27 @@ Sky.prototype._default = {
     this.sunlight.intensity = 0;
   },
   day: 0,
-  moonCycle: 29.5305882
+  moonCycle: 29.5305882,
+  until: false
 };
 
 // default sky fn
 Sky.prototype.fn = function(time) {
   var my = this._default;
+  var hour = Math.round(time / 100) * 100;
 
   // run initialization once
   if (my.init) { my.init.call(this); delete my.init; }
 
   // switch color based on time of day
-  // make this fuzzy so colors change near the time
-  if (my.hours[time]) this.color(my.hours[time].color, 1000);
+  // maybe make this next part into a helper function
+  if (my.hours[hour]) {
+    if (!my.until) {
+      this.color(my.hours[hour].color, 1000);
+      my.until = hour + 100;
+    }
+  }
+  if (my.until === hour) my.until = false;
 
   // change moon phase
   if (time === 1200) {
@@ -80722,6 +80726,16 @@ require.define("/lib/moon.js",function(require,module,exports,__dirname,__filena
   var x = this.canvas.width / 2;
   var y = this.canvas.height / 2;
 
+  // bg glow
+  this.context.beginPath();
+  var grd = this.context.createRadialGradient(x+r/2, y+r/2, 1, x+r/2, y+r/2, r * 2);
+  grd.addColorStop(0, this.rgba(1, 1, 1, 0.3));
+  grd.addColorStop(1, this.rgba(1, 1, 1, 0));
+  this.context.arc(x+r/2, y+r/2, r * 2, 0, 2 * Math.PI, false);
+  this.context.fillStyle = grd;
+  this.context.fill();
+  this.context.closePath();
+
   // clipping region
   this.context.save();
   this.context.beginPath();
@@ -80736,22 +80750,11 @@ require.define("/lib/moon.js",function(require,module,exports,__dirname,__filena
 
   this.context.translate(x, y);
 
-  // darker artifacts
+  // lighter inside
   this.context.beginPath();
-  this.context.rect(0, 0, r/2, r/2);
-  this.context.rect(r/2, r/2, r/2, r/2);
-  this.context.fillStyle = this.rgba(0, 0, 0, 0.5);
+  this.context.rect(4, 4, r-8, r-8);
+  this.context.fillStyle = this.rgba(1, 1, 1, 0.8);
   this.context.fill();
-  
-  // darkest artifacts
-  for (var i = 0; i < 2; i++) {
-    this.context.beginPath();
-    for (var a = 0; a < 10; a++) {
-      this.context.rect(Math.random() * (r-(r/4)), Math.random() * (r-(r/4)), r/4, r/4);
-    }
-    this.context.fillStyle = this.rgba(0, 0, 0, 0.3);
-    this.context.fill();
-  }
 
   // moon phase
   var px = (phase * r * 2) - r;
