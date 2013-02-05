@@ -32,10 +32,10 @@
     "voxel-trajectory": "~0.1.0"
   },
   "devDependencies": {
-    "voxel-engine": "~0.3.4",
+    "voxel-engine": "~0.5.3",
     "voxel-perlin-terrain": "0.0.5",
     "voxel-forest": "0.0.0",
-    "browservefy": "0.0.0",
+    "browservefy": "0.0.4",
     "toolbar": "0.0.2"
   },
   "keywords": [

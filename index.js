@@ -4,7 +4,7 @@ function Sky(opts) {
   var self = this;
   if (opts.THREE) opts = {game:opts};
   this.game   = opts.game;
-  this.time   = opts.time  || 2400;
+  this.time   = opts.time  || 0;
   this.size   = opts.size  || this.game.worldWidth() * 2;
   this._color = opts.color || new this.game.THREE.Color(0, 0, 0);
   this._speed = opts.speed || 0.1;
@@ -18,11 +18,8 @@ module.exports = function(opts) {
     if (typeof fn === 'function') sky.fn = fn;
     else if (typeof fn === 'number') {
       // move to the specific time of day
-      sky.time--;
-      while (sky.time < fn) {
-        sky.fn(sky.time);
-        sky.time += sky._speed;
-      }
+      sky.time = fn;
+      for (var i = 0; i <= 2400; i += sky._speed) sky.tick.call(sky);
     }
     return sky.tick.bind(sky);
   }
@@ -93,7 +90,8 @@ Sky.prototype.color = function(end, time) {
 };
 
 Sky.prototype.speed = function(speed) {
-  return this._speed = speed;
+  if (speed != null) this._speed = speed;
+  return this._speed;
 };
 
 Sky.prototype.paint = function(faces, fn) {
@@ -177,13 +175,16 @@ Sky.prototype._default = {
   },
   day: 0,
   moonCycle: 29.5305882,
-  until: false
+  until: false,
+  last: 0
 };
 
 // default sky fn
 Sky.prototype.fn = function(time) {
   var my = this._default;
   var hour = Math.round(time / 100) * 100;
+  var speed = Math.abs(my.last - time);
+  my.last = time;
 
   // run initialization once
   if (my.init) { my.init.call(this); delete my.init; }
@@ -192,7 +193,7 @@ Sky.prototype.fn = function(time) {
   // maybe make this next part into a helper function
   if (my.hours[hour]) {
     if (!my.until) {
-      this.color(my.hours[hour].color, 1000);
+      this.color(my.hours[hour].color, speed > 9 ? 100 : 1000);
       my.until = hour + 100;
     }
   }
@@ -226,7 +227,7 @@ Sky.prototype.fn = function(time) {
   }
 
   // turn on sunlight
-  if (this.time === 400) {
+  if (time === 400) {
     (function(sunlight) {
       var i = setInterval(function() {
         sunlight.intensity += 0.1;
@@ -236,7 +237,7 @@ Sky.prototype.fn = function(time) {
   }
 
   // turn off sunlight
-  if (this.time === 1800) {
+  if (time === 1800) {
     (function(sunlight) {
       var i = setInterval(function() {
         sunlight.intensity -= 0.1;
