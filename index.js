@@ -84,6 +84,7 @@ Sky.prototype.color = function(end, time) {
       mat.color.setHSV(color.h, color.s, color.v);
     });
     self.ambient.color.setHSV(color.h, color.s, color.v);
+    if (self.game.scene.fog) self.game.scene.fog.color.setHSV(color.h, color.s, color.v);
     if (dt === 1) clearInterval(self._colorInterval);
     i += self._speed;
   }, self._speed);
