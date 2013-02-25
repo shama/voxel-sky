@@ -122,6 +122,7 @@ npm install voxel-sky
 Use [browserify](http://browserify.org) to `require('voxel-sky')`.
 
 ## release history
+* 0.1.2 - updates for voxel-engine@0.6.0 (thanks @nakedible!)
 * 0.1.1 - simplify moon, no tilt, better color changes
 * 0.1.0 - initial release
 

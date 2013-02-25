@@ -12,18 +12,17 @@ var game = createEngine({
     'plank'
   ],
   texturePath: './textures/',
-  startingPosition: [35, -1200, 35],
   worldOrigin: [0, 0, 0],
   fogDisabled: true,
   lightsDisabled: true
 });
-var hasLock = false;
 var container = document.getElementById('container');
 game.appendTo(container);
-container.addEventListener('click', function() {
-  game.requestPointerLock(container);
-  hasLock = true;
-});
+
+var createPlayer = require('voxel-player')(game);
+var shama = createPlayer('shama.png');
+shama.yaw.position.set(0, 100, 0);
+shama.possess();
 
 // add some trees
 var createTree = require('voxel-forest');
