@@ -32,7 +32,7 @@
     "voxel-trajectory": "~0.1.0"
   },
   "devDependencies": {
-    "voxel-engine": "0.6.0",
+    "voxel-engine": "0.7.0",
     "voxel-perlin-terrain": "0.0.5",
     "voxel-forest": "0.0.0",
     "browservefy": "0.0.4",
@@ -41,8 +41,8 @@
     "voxel-player": "~0.1.0"
   },
   "peerDependencies": {
-    "voxel-engine": "0.6.0",
-    "voxel-player": "0.1.0"
+    "voxel-engine": ">=0.7.0",
+    "voxel-player": ">=0.1.0"
   },
   "keywords": [
     "voxel",
