@@ -28,9 +28,11 @@ module.exports.Sky = Sky;
 
 Sky.prototype.tick = function() {
   this.fn.call(this, this.time);
-  this.outer.position.copy(this.game.cameraPosition());
-  this.inner.position.copy(this.game.cameraPosition());
-  this.ambient.position.copy(this.game.cameraPosition());
+  var pos = this.game.cameraPosition();
+  var vec = new this.game.THREE.Vector3(pos[0], pos[1], pos[2]);
+  this.outer.position.copy(vec);
+  this.inner.position.copy(vec);
+  this.ambient.position.copy(vec);
   this.time += this._speed;
   if (this.time > 2400) this.time = 0;
   return this;
