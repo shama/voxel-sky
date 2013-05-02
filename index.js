@@ -1,11 +1,12 @@
 var traj = require('voxel-trajectory');
+var tic = require('tic')();
 
 function Sky(opts) {
   var self = this;
   if (opts.THREE) opts = {game:opts};
   this.game   = opts.game;
   this.time   = opts.time  || 0;
-  this.size   = opts.size  || this.game.worldWidth() * 2;
+  this.size   = opts.size  || this.game.worldWidth() * 3;
   this._color = opts.color || new this.game.THREE.Color(0, 0, 0);
   this._speed = opts.speed || 0.1;
 }
@@ -26,7 +27,8 @@ module.exports = function(opts) {
 };
 module.exports.Sky = Sky;
 
-Sky.prototype.tick = function() {
+Sky.prototype.tick = function(dt) {
+  tic.tick(dt);
   this.fn.call(this, this.time);
   var pos = this.game.cameraPosition();
   var vec = new this.game.THREE.Vector3(pos[0], pos[1], pos[2]);
@@ -43,7 +45,8 @@ Sky.prototype.createBox = function() {
   var size = this.size;
 
   var mat = new game.THREE.MeshBasicMaterial({
-    side: game.THREE.BackSide
+    side: game.THREE.BackSide,
+    fog: false,
   });
   this.outer = new game.THREE.Mesh(
     new game.THREE.CubeGeometry(size, size, size),
@@ -74,20 +77,20 @@ Sky.prototype.createLights = function() {
 
 Sky.prototype.color = function(end, time) {
   var self = this;
-  if (self._colorInterval) clearInterval(self._colorInterval);
+  if (self._colorInterval) self._colorInterval();
   var i = 0;
-  var start = self._color.clone().getHSV();
-  var color = self._color.clone().getHSV();
-  self._colorInterval = setInterval(function() {
+  var start = self._color.clone().getHSL();
+  var color = self._color.clone().getHSL();
+  self._colorInterval = tic.interval(function() {
     var dt = i / time;
     for (var p in color) color[p] = start[p] + (end[p] - start[p]) * dt;
-    self._color.setHSV(color.h, color.s, color.v);
+    self._color.setHSL(color.h, color.s, color.l);
     self.outer.material.materials.forEach(function(mat) {
-      mat.color.setHSV(color.h, color.s, color.v);
+      mat.color.setHSL(color.h, color.s, color.l);
     });
-    self.ambient.color.setHSV(color.h, color.s, color.v);
-    if (self.game.scene.fog) self.game.scene.fog.color.setHSV(color.h, color.s, color.v);
-    if (dt === 1) clearInterval(self._colorInterval);
+    self.ambient.color.setHSL(color.h, color.s, color.l);
+    if (self.game.scene.fog) self.game.scene.fog.color.setHSL(color.h, color.s, color.l);
+    if (dt === 1) self._colorInterval();
     i += self._speed;
   }, self._speed);
 };
@@ -126,19 +129,18 @@ Sky.prototype.createCanvas = function() {
   var game = this.game;
 
   var canvas = document.createElement('canvas');
-  canvas.width  = 512;
-  canvas.height = 512;
+  canvas.height = canvas.width = 512;
   var context = canvas.getContext('2d');
 
   var material = new game.THREE.MeshBasicMaterial({
     side: game.THREE.BackSide,
     map: new game.THREE.Texture(canvas),
-    transparent: true
+    transparent: true,
+    fog: false,
   });
   material.magFilter = game.THREE.NearestFilter;
   material.minFilter = game.THREE.LinearMipMapLinearFilter;
-  material.wrapT     = game.THREE.RepeatWrapping;
-  material.wrapS     = game.THREE.RepeatWrapping;
+  material.wrapS = material.wrapT = game.THREE.RepeatWrapping;
   material.map.needsUpdate = true;
 
   return material;
@@ -148,7 +150,7 @@ Sky.prototype.spin = function(r) {
   this.inner.rotation.x = this.outer.rotation.x = r;
   this.ambient.rotation.x = r + Math.PI;
   var t = traj(this.size/2, this.ambient.rotation);
-  this.sunlight.position.set(t.x, t.y, t.z);
+  this.sunlight.position.set(t[0], t[1], t[2]);
   this.sunlight.lookAt(0, 0, 0);
 };
 
@@ -160,11 +162,11 @@ Sky.prototype.clear = function() {
 // default sky
 Sky.prototype._default = {
   hours: {
-       0: {color: {h: 230/360, s: 0.3, v: 0}},
-     300: {color: {h: 26/360, s: 0.3, v: 0.5}},
-     500: {color: {h: 230/360, s: 0.3, v: 1}},
-    1400: {color: {h: 26/360, s: 0.3, v: 0.5}},
-    1600: {color: {h: 230/360, s: 0.3, v: 0}}
+       0: {color: {h: 230/360, s: 0.3, l: 0}},
+     300: {color: {h: 26/360, s: 0.3, l: 0.5}},
+     500: {color: {h: 230/360, s: 0.3, l: 0.7}},
+    1400: {color: {h: 26/360, s: 0.3, l: 0.5}},
+    1600: {color: {h: 230/360, s: 0.3, l: 0}}
   },
   init: function() {
     // add a sun on the bottom
@@ -213,18 +215,18 @@ Sky.prototype.fn = function(time) {
   if (time === 500) {
     this.paint(['top', 'left', 'right', 'front', 'back'], function() {
       this.material.transparent = true;
-      var i = setInterval(function(mat) {
+      var i = tic.interval(function(mat) {
         mat.opacity -= 0.1;
-        if (mat.opacity <= 0) clearInterval(i);
+        if (mat.opacity <= 0) i();
       }, 100, this.material);
     });
   }
   if (time === 1800) {
     this.paint(['top', 'left', 'right', 'front', 'back'], function() {
       this.material.transparent = true;
-      var i = setInterval(function(mat) {
+      var i = tic.interval(function(mat) {
         mat.opacity += 0.1;
-        if (mat.opacity >= 1) clearInterval(i);
+        if (mat.opacity >= 1) i();
       }, 100, this.material);
     });
   }
@@ -232,9 +234,9 @@ Sky.prototype.fn = function(time) {
   // turn on sunlight
   if (time === 400) {
     (function(sunlight) {
-      var i = setInterval(function() {
+      var i = tic.interval(function() {
         sunlight.intensity += 0.1;
-        if (sunlight.intensity <= 1) clearInterval(i);
+        if (sunlight.intensity <= 1) i();
       }, 100);
     }(this.sunlight));
   }
@@ -242,9 +244,9 @@ Sky.prototype.fn = function(time) {
   // turn off sunlight
   if (time === 1800) {
     (function(sunlight) {
-      var i = setInterval(function() {
+      var i = tic.interval(function() {
         sunlight.intensity -= 0.1;
-        if (sunlight.intensity <= 0) clearInterval(i);
+        if (sunlight.intensity <= 0) i();
       }, 100);
     }(this.sunlight));
   }

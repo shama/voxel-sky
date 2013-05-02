@@ -7,12 +7,11 @@
 
 ## example
 
-First off, it is recommended to disable fog and lights in the game when using
+First off, it is recommended to disable lights in the game when using
 `voxel-sky`:
 ```js
 var createEngine = require('voxel-engine');
 var game = createEngine({
-  fogDisabled: true,
   lightsDisabled: true
 });
 ```
@@ -73,7 +72,7 @@ var sky = createSky(function(time) {
     this.sunlight.intensity = 0.2;
 
     // set the ambient color (is a hemisphere light)
-    this.ambient.color.setHSV(0.9, 1, 1);
+    this.ambient.color.setHSL(0.9, 1, 1);
   }
 });
 game.on('tick', sky);
@@ -122,6 +121,7 @@ npm install voxel-sky
 Use [browserify](http://browserify.org) to `require('voxel-sky')`.
 
 ## release history
+* 0.2.0 - update for voxel-engine@0.17.0. Use tic to keep in sync with game clock. Now works with fog.
 * 0.1.2 - updates for voxel-engine@0.6.0 (thanks @nakedible!)
 * 0.1.1 - simplify moon, no tilt, better color changes
 * 0.1.0 - initial release
