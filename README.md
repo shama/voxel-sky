@@ -121,6 +121,7 @@ npm install voxel-sky
 Use [browserify](http://browserify.org) to `require('voxel-sky')`.
 
 ## release history
+* 0.3.0 - Ability to spin the sky in any axis and defaulting to z (@rachel-carvalho).
 * 0.2.0 - update for voxel-engine@0.17.0. Use tic to keep in sync with game clock. Now works with fog.
 * 0.1.2 - updates for voxel-engine@0.6.0 (thanks @nakedible!)
 * 0.1.1 - simplify moon, no tilt, better color changes
