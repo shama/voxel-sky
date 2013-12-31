@@ -146,9 +146,10 @@ Sky.prototype.createCanvas = function() {
   return material;
 };
 
-Sky.prototype.spin = function(r) {
-  this.inner.rotation.x = this.outer.rotation.x = r;
-  this.ambient.rotation.x = r + Math.PI;
+Sky.prototype.spin = function(r, axis) {
+  axis = axis || 'z';
+  this.inner.rotation[axis] = this.outer.rotation[axis] = r;
+  this.ambient.rotation[axis] = r + Math.PI;
   var t = traj(this.size/2, this.ambient.rotation);
   this.sunlight.position.set(t[0], t[1], t[2]);
   this.sunlight.lookAt(0, 0, 0);
